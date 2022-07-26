@@ -256,7 +256,7 @@ implementation {
         call PacketAcknowledgements.requestAck( &packet );
         
         if (call AMSend.send(address_coupled_device, &packet, sizeof(sb_msg_t)) == SUCCESS) {
-          dbg("Radio", "Radio: sanding INFO packet to node %hhu, attempt: %d\n", address_coupled_device, attempt);	
+          dbg("Radio", "Radio: sending INFO packet to node %hhu, attempt: %d\n", address_coupled_device, attempt);	
           busy = TRUE;
         }
       }
