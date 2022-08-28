@@ -22,13 +22,22 @@ module SmartBraceletC @safe() {
   }
 }
 
+/* Convention: 
+
+  TOS_ID % 2 = 0 ---> PARENT
+  TOS_ID % 2 != 0 ---> CHILD
+
+*/
+
+
 implementation {
   
  // Radio control
   bool busy = FALSE;
+  bool paired = FALSE; // to check if the parent is paired to a child
   uint16_t counter = 0;
   message_t packet;
-  am_addr_t address_coupled_device;
+  am_addr_t parent_key;
   uint8_t attempt = 0;
   
   // Current mode
@@ -93,7 +102,44 @@ implementation {
   
 
    
-  event message_t* Receive.receive(message_t* bufPtr, void* payload, uint8_t len) {
+  event message_t* Receive.receive(message_t* rec_packet, void* payload, uint8_t len) {
+    // The receive is organized by use case and is going to call other functions depending 
+    // on the message received ( to have a clearer code ).
+    smartB_msg_t* message = (smartB_msg_t*)payload;
+    // Print data of the received packet
+	  dbg("Receive","Message received from bracelet %hhu at time %s\n", call AMPacket.source( rec_packet ), sim_time_string());
+	  dbg("Received_package","Payload: type: %hu, msg_id: %hhu, data: %s\n", message->msg_type, message->msg_id, message->data);
+    
+    //Received a pairing message
+
+    //Received an info message
+    if(message->msg_type == 2 ){
+
+      // Check if the instance is a parent, if the parent is paired and if the message comes from
+      // the paired child
+      if( TOS_ID%2 == 0 && paired && call AMPacket.source( rec_packet ) == parent_key){
+        last_status->X = message->X;
+        last_status->Y = message->Y;
+
+
+        dbg("Received_package","INFO message received\n");
+        dbg("Info", "Position X: %hhu, Y: %hhu\n", message->X, message->Y);
+        dbg("Info", "Sensor status: %s\n", message->data);
+        
+        // Check if the status is FALLING and signal an alarm
+        if (strcmp(message->data, "FALLING") == 0){
+            dbg("Info", "ALERT: FALLING!\n");
+ 	          //send to serial here
+        }
+
+        
+        // Start the alert timer, if it finishes because it never gets caled back again then 
+        // the child is missing
+        call TimerAlert.startOneShot(60000);
+
+      }
+    }
+    
     
   }
 
@@ -107,7 +153,7 @@ implementation {
    
   }
   
-   event void PositionSensor.readDone(error_t result, sensor_status current_read) {
+   event void PositionSensor.read_complete(error_t result, sensor_status current_read) {
 	if( result == SUCCESS ){ //check that the reading went well
         status = current_read;
         sensors_read_completed = TRUE;
@@ -141,8 +187,8 @@ implementation {
       */
 
      // Send the info message to the parent bracelet using the unique address.
-     if (!busy && call AMSend.send(address_coupled_device, &packet, sizeof(smartB_msg_t)) == SUCCESS ) {
-          dbg("Radio", "Radio: sending INFO packet to node %hhus\n", address_coupled_device);	
+     if (!busy && call AMSend.send(parent_key, &packet, sizeof(smartB_msg_t)) == SUCCESS ) {
+          dbg("Radio", "Radio: sending INFO packet to node %hhus\n", parent_key);	
           busy = TRUE;
         }
 
