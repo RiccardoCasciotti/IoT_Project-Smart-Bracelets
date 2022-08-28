@@ -2,14 +2,13 @@
 #define SMARTBRACELET_H
 
 // Message struct
-typedef nx_struct sb_msg {
+typedef nx_struct smartB_msg_t {
   	nx_uint8_t msg_type;
   	nx_uint16_t msg_id;
-
   	nx_uint8_t data[20];
   	nx_uint16_t X;
   	nx_uint16_t Y;
-} sb_msg_t;
+} smartB_msg_t;
 
 typedef struct sensorStatus {
   uint8_t status[10];
@@ -21,6 +20,7 @@ typedef struct sensorStatus {
 // Constants
 enum {
   AM_RADIO_TYPE = 6,
+  
 };
 
 // Pre-loaded random keys
@@ -38,8 +38,9 @@ enum {
 enum KEY_ENUM {
     FOREACH_KEY(GENERATE_ENUM)
 };
-static const char *RANDOM_KEY[] = {
+static const char *PRESTORED_KEY[] = {
     FOREACH_KEY(GENERATE_STRING)
 };
+
 
 #endif
