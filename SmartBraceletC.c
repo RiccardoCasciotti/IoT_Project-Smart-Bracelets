@@ -117,7 +117,7 @@ implementation {
 
       // Check if the instance is a parent, if the parent is paired and if the message comes from
       // the paired child
-      if( TOS_ID%2 == 0 && paired && call AMPacket.source( rec_packet ) == parent_key){
+      if( TOS_NODE_ID%2 == 0 && paired && call AMPacket.source( rec_packet ) == parent_key){
         last_status->X = message->X;
         last_status->Y = message->Y;
 
@@ -132,7 +132,7 @@ implementation {
  	          //send to serial here
         }
 
-        
+
         // Start the alert timer, if it finishes because it never gets caled back again then 
         // the child is missing
         call TimerAlert.startOneShot(60000);
@@ -153,7 +153,7 @@ implementation {
    
   }
   
-   event void PositionSensor.read_complete(error_t result, sensor_status current_read) {
+   event void PositionSensor.readDone(error_t result, sensor_status current_read) {
 	if( result == SUCCESS ){ //check that the reading went well
         status = current_read;
         sensors_read_completed = TRUE;

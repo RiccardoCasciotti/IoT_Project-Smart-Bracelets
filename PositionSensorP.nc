@@ -9,16 +9,16 @@ generic module PositionSensorP() {
 implementation 
 {
 
-	task void read_complete();
+	task void readDone();
 
 	//***************** Read interface ********************//
 	command error_t Read.read(){
-		post read_complete();
+		post readDone();
 		return SUCCESS;
 	}
 
 	//******************** Read Done **********************//
-	task void read_complete() {
+	task void readDone() {
 	  
 	  sensor_status status;
 
@@ -34,7 +34,7 @@ implementation
 		  strcpy(status.status, "FALLING");
 		}
 		
-	  	signal Read.read_complete( SUCCESS, status);
+	  	signal Read.readDone( SUCCESS, status);
 	  	status.X = call Random.rand16();
 	  	status.Y = call Random.rand16();
 

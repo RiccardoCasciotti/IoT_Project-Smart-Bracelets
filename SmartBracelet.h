@@ -16,6 +16,18 @@ typedef struct sensorStatus {
   uint16_t Y;
 } sensor_status;
 
+/*
+Convention: status is an integer
+
+0 is standing 
+1 is walking
+2 is running 
+3 is falling 
+
+to solve the string compare types bug
+
+*/
+
 
 // Constants
 enum {
