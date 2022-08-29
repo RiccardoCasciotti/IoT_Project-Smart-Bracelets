@@ -121,8 +121,47 @@ implementation {
 
  
   
-  event void AMSend.sendDone(message_t* bufPtr, error_t error) {
-    
+  event void AMSend.sendDone(message_t* rec_packet, error_t error) {
+    if (&packet == rec_packet && error == SUCCESS) {
+      dbg("Radio_sent", "Packet sent\n");
+      busy = FALSE;
+      
+      if (mode == 1 && call PacketAcknowledgements.wasAcked(rec_packet) ){
+        // mode == 1 and ack received
+        mode = 2; // Pairing phase 1 completed
+        dbg("Radio_ack", "Pairing ack received at time %s\n", sim_time_string());
+        dbg("Pairing","Pairing phase 1 completed for node: %hhu\n\n", address_coupled_device);
+        
+        // Start operational phase
+        if (TOS_NODE_ID % 2 == 0){
+          // Parent bracelet
+          dbg("OperationalMode","Parent bracelet\n");
+          //call SerialControl.start();
+          call Timer60.startOneShot(60000);
+        } else {
+          // Child bracelet
+          dbg("OperationalMode","Child bracelet\n");
+          call Timer10.startPeriodic(10000);
+        }
+      
+      } else if (mode == 1){
+        // Mode == 1 but ack not received
+        dbg("Radio_ack", "Pairing ack not received at time %s\n", sim_time_string());
+        send_confirmation(); // Send confirmation again
+      
+      } else if (mode == 2 && call PacketAcknowledgements.wasAcked(rec_packet)){
+        // Mode == 2 and ack received
+        dbg("Radio_ack", "INFO ack received at time %s\n", sim_time_string());
+        attempt = 0;
+        
+      } else if (mode == 2){
+        // Mode == 2 and ack not received
+        dbg("Radio_ack", "INFO ack not received at time %s\n", sim_time_string());
+        send_info_message();
+      }
+        
+    }
+
   }
   
 
@@ -152,7 +191,7 @@ implementation {
       call TimerPairing.stop();
 
     //Received an info message
-    else if( call AMPacket.destination( bufPtr ) == TOS_NODE_ID && message->msg_type == 2 ){
+    else if(call AMPacket.destination( bufPtr ) == TOS_NODE_ID && message->msg_type == 2){
 
       // Check if the instance is a parent, if the parent is paired and if the message comes from
       // the paired child
@@ -160,27 +199,24 @@ implementation {
         last_status->X = message->X;
         last_status->Y = message->Y;
 
-
         dbg("Received_package","INFO message received\n");
         dbg("Info", "Position X: %hhu, Y: %hhu\n", message->X, message->Y);
         dbg("Info", "Sensor status: %s\n", message->data);
-        
+        call TimerAlert.start();
+
         // Check if the status is FALLING and signal an alarm
         if (message->data == 3){
             dbg("Info", "ALERT: FALLING!\n");
  	          //send to serial here
-        }
-
+    }
 
         // Start the alert timer, if it finishes because it never gets caled back again then 
         // the child is missing
         call TimerAlert.startOneShot(60000);
 
       }
-    }
-    
-    
   }
+   
 
  
  
