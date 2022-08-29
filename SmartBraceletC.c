@@ -217,11 +217,7 @@ implementation {
       }
   }
    
-
- 
- 
-
-
+   
 
   // Send confirmation in mode 1
   void send_confirmation(){
