@@ -24,8 +24,8 @@ module SmartBraceletC @safe() {
 
 /* Convention: 
 
-  TOS_ID % 2 = 0 ---> PARENT
-  TOS_ID % 2 != 0 ---> CHILD
+  TOS_ID % 2 == 0 ---> PARENT
+  TOS_ID % 2 == 1 ---> CHILD
 
 */
 
@@ -42,6 +42,15 @@ implementation {
   
   // Current mode
   uint8_t mode = 0;
+
+  /*
+
+  mode == 0 pairing
+  mode == 1 confirmation pairing
+  mode == 2 operation
+  mode == 3 alert
+
+  */
   
   // Sensors
   bool sensors_read_completed = FALSE;
@@ -49,7 +58,6 @@ implementation {
   sensor_status status;
   sensor_status last_status;
   
-
   void send_confirmation();
   void send_position();
   
@@ -75,7 +83,24 @@ implementation {
   
 
   event void TimerPairing.fired() {
-    
+    counter++;
+    dbg("TimerPairing", "TimerPairing: timer fired at time %s\n", sim_time_string());
+    if (!busy) {
+      smartB_msg_t* smartB_pairing_message = (smartB_msg_t*)call Packet.getPayload(&packet, sizeof(smartB_msg_t));
+      
+      // Fill payload
+      smartB_pairing_message->msg_type = 0; // 0 for pairing phase
+      smartB_pairing_message->msg_id = counter;
+
+      //The node ID is divided by 2 so every 2 nodes will be the same number (0/2=0 and 1/2=0)
+      //we get the same key for every 2 nodes: parent and child
+      strcpy(smartB_pairing_message->data, RANDOM_KEY[TOS_NODE_ID/2]);
+      
+      if (call AMSend.send(AM_BROADCAST_ADDR, &packet, sizeof(smartB_msg_t)) == SUCCESS) {
+	      dbg("Radio", "Radio: sending pairing packet, key=%s\n", RANDOM_KEY[TOS_NODE_ID/2]);	
+	      busy = TRUE;
+      }
+    }
   }
   
   // TimerInfo fired
@@ -112,8 +137,22 @@ implementation {
     
     //Received a pairing message
 
+    // checknig that is a broadcast message, that the mode is 0 (pairing phase)  
+    // and that the key is the same
+    if (call AMPacket.destination( rec_packet ) == AM_BROADCAST_ADDR && phase == 0 && strcmp(message->data, RANDOM_KEY[TOS_NODE_ID/2]) == 0){
+      
+      parent_key = call AMPacket.source( bufPtr );
+      mode = 1; // 1 for confirmation of pairing phase
+      dbg("Radio_pack","Message for pairing phase 0 received. Address: %hhu\n", parent_key);
+      send_confirmation();
+    
+    } else if (call AMPacket.destination( bufPtr ) == TOS_NODE_ID && mess->msg_type == 1) {
+      // Enters if the packet is for this destination and if the msg_type == 1
+      dbg("Radio_pack","Message for pairing phase 1 received\n");
+      call TimerPairing.stop();
+
     //Received an info message
-    if(message->msg_type == 2 ){
+    else if( call AMPacket.destination( bufPtr ) == TOS_NODE_ID && message->msg_type == 2 ){
 
       // Check if the instance is a parent, if the parent is paired and if the message comes from
       // the paired child
@@ -127,7 +166,7 @@ implementation {
         dbg("Info", "Sensor status: %s\n", message->data);
         
         // Check if the status is FALLING and signal an alarm
-        if (strcmp(message->data, "FALLING") == 0){
+        if (message->data == 3){
             dbg("Info", "ALERT: FALLING!\n");
  	          //send to serial here
         }
@@ -150,10 +189,29 @@ implementation {
 
   // Send confirmation in mode 1
   void send_confirmation(){
-   
+
+   counter++;
+    if (!busy) {
+      smartB_msg_t* sb_pairing_message = (smartB_msg_t*)call Packet.getPayload(&packet, sizeof(smartB_msg_t));
+      
+      // Fill payload
+      sb_pairing_message->msg_type = 1; // 1 for confirmation of pairing phase
+      sb_pairing_message->msg_id = counter;
+      
+      strcpy(sb_pairing_message->data, RANDOM_KEY[TOS_NODE_ID/2]);
+      
+      /* Require ack
+      call PacketAcknowledgements.requestAck( &packet );
+      */
+      
+      if (call AMSend.send(parent_key, &packet, sizeof(smartB_msg_t)) == SUCCESS) {
+        dbg("Radio", "Radio: sending pairing confirmation to node %hhu\n", parent_key);	
+        busy = TRUE;
+      }
+    }
   }
   
-   event void PositionSensor.readDone(error_t result, sensor_status current_read) {
+  event void PositionSensor.readDone(error_t result, sensor_status current_read) {
 	if( result == SUCCESS ){ //check that the reading went well
         status = current_read;
         sensors_read_completed = TRUE;
@@ -174,11 +232,11 @@ implementation {
       // Prepare the info message and fill it with the sensor data
       smartB_msg_t* info_message = (smartB_msg_t*)call Packet.getPayload(&packet, sizeof(smartB_msg_t));
       info_message->msg_type = 2;
-      info_message->msg_id = counter++;
+      info_message->msg_id = ++counter;
       info_message->X = status.X;
       info_message->Y = status.Y;
       
-      if( strcpy(info_message->data, status.status) == info_message->data)
+      if( strcpy(info_message->data, status.status) == info_message->data )
         msg_state = TRUE;
 
       /*
