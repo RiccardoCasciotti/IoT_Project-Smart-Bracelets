@@ -39,6 +39,7 @@ implementation {
         "QJIpr3uqMKhFOrgSya84",
         "N1Rpe4XJvetQAiYrbXoL",
         "aCsH4cRnnQ3LJFaC0Dfy"};
+        
  // Radio control
   uint8_t busy = 0;
   uint8_t paired = 0; // to check if the parent is paired to a child
@@ -182,7 +183,7 @@ implementation {
     
     //Received a pairing message
 
-    // checknig that is a broadcast message, that the mode is 0 (pairing phase)  
+    // checking that is a broadcast message, that the mode is 0 (pairing phase)  
     // and that the key is the same
     if (call AMPacket.destination( rec_packet ) == AM_BROADCAST_ADDR && mode == 0 && strcmp((char*)message->data, (char*)PRESTORED_KEY[TOS_NODE_ID/2]) == 0){
 
