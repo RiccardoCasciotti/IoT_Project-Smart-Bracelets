@@ -65,13 +65,13 @@ Pairing mode:
     -the pairing message is received -also- from the children that checks the preloaded key with the one arrived in the message and if they are equal it sends a confirmation message (msg_type = 1) to the parent requesting the ack;
     -the parent acks the confirmation message and both the bracelets switch to operational mode (mode =2), save the address for the coupled bracelet and assign 1 to paired variable;
 
-Operational phase
+Operational phase:
     - Once the pairing phase is completed the TimerInfo() is fired in a periodic way so that every 10 seconds the child sends his position information to the parent's bracelet. 
     - Once the sensor reading is completed the informations are loaded in the message struct used by the motes to communicate (  the message is sent using the send_position() function ).
     - The message is sent to the right parent because the child mote stores the address of the parent right after pairing is completed and is going to use that one to send all the info messages. 
     - If the parent receives a FALLING  info message from the child an ALERT is thrown.
 
-Alert phase
+Alert phase:
     - If the parent doesn't receive an INFO message from the child every at most 60 seconds a MISSING alarm is thrown and the last known position is notified. 
 
 The convention to assign the child motes and the parent motes is that all the even TOS_IDs correspond to parents while all the odd ones to children.
