@@ -16,7 +16,7 @@ implementation {
 
   components new PositionSensorC();
   
-  components SerialActiveMessageC as AMSerial;
+  //components SerialActiveMessageC as AMSerial;
   
   // Boot interface
   App.Boot -> MainC.Boot;
@@ -38,11 +38,11 @@ implementation {
 
   App.PositionSensor -> PositionSensorC;
   
-/*
+
   // Serial port
-  App.SerialControl -> AMSerial;
-  App.SerialAMSend -> AMSerial.AMSend[AM_MY_SERIAL_MSG];
-  App.SerialPacket -> AMSerial;*/
+  //App.SerialControl -> AMSerial;
+  //App.SerialAMSend -> AMSerial.AMSend[AM_MY_SERIAL_MSG];
+ // App.SerialPacket -> AMSerial;
   
 }
 

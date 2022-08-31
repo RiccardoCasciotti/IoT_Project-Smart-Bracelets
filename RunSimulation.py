@@ -44,20 +44,21 @@ t.addChannel("Radio_ack",out);
 print "Activate debug message on channel Radio_sent"
 t.addChannel("Radio_sent",out);
 print "Activate debug message on channel Radio_rec"
-t.addChannel("Radio_rec",out);
+t.addChannel("Receive",out);
 print "Activate debug message on channel Radio_pack"
-t.addChannel("Radio_pack",out);
+t.addChannel("Received_package",out);
 
 print "Activate debug message on channel OperationalMode"
 t.addChannel("OperationalMode",out);
 print "Activate debug message on channel Timer10s"
 t.addChannel("Timer10s",out);
 print "Activate debug message on channel Timer60s"
-t.addChannel("Timer60s",out);
+t.addChannel("TimerAlert",out);
 print "Activate debug message on channel Sensors"
 t.addChannel("Sensors",out);
 print "Activate debug message on channel Info"
 t.addChannel("Info",out);
+#t.addChannel("DEB",out);
 
 
 print "Creating node 0...";
@@ -132,7 +133,8 @@ while (t.time() < simtime + (200 * t.ticksPerSecond())):
 	if(node1off == False):
 		if (t.time() >= (30 * t.ticksPerSecond())): 
 			node1.turnOff()
-			node1Off = True
+			print "\n\n\nNode1 OFF";
+			node1off = True
 	
 print "\n\n\nSimulation finished!";
 

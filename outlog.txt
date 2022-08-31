@@ -1,0 +1,201 @@
+DEBUG (0): Radio device ready
+DEBUG (0): Pairing mode started
+DEBUG (1): Radio device ready
+DEBUG (3): Radio device ready
+DEBUG (2): Radio device ready
+DEBUG (2): Pairing mode started
+DEBUG (2): TimerPairing: timer fired at time 0:0:0.244140635
+DEBUG (2): Radio: sending pairing packet, key=wzqpKCsbn9R0v9OcFgdS
+DEBUG (0): TimerPairing: timer fired at time 0:0:0.244140635
+DEBUG (0): Radio: sending pairing packet, key=QupLLo2877mHWlAsSHvY
+DEBUG (3): Message received from bracelet 0 at time 0:0:0.253555252
+DEBUG (3): Payload: type: 0, msg_id: 1, data: QupLLo2877mHWlAsSHvY
+DEBUG (2): Message received from bracelet 0 at time 0:0:0.253555252
+DEBUG (2): Payload: type: 0, msg_id: 1, data: QupLLo2877mHWlAsSHvY
+DEBUG (1): Message received from bracelet 0 at time 0:0:0.253555252
+DEBUG (1): Payload: type: 0, msg_id: 1, data: QupLLo2877mHWlAsSHvY
+DEBUG (1): Radio: sending pairing confirmation to node 0
+DEBUG (0): Packet sent
+DEBUG (3): Message received from bracelet 2 at time 0:0:0.255096381
+DEBUG (3): Payload: type: 0, msg_id: 1, data: wzqpKCsbn9R0v9OcFgdS
+DEBUG (3): Radio: sending pairing confirmation to node 2
+DEBUG (1): Message received from bracelet 2 at time 0:0:0.255096381
+DEBUG (1): Payload: type: 0, msg_id: 1, data: wzqpKCsbn9R0v9OcFgdS
+DEBUG (0): Message received from bracelet 2 at time 0:0:0.255096381
+DEBUG (0): Payload: type: 0, msg_id: 1, data: wzqpKCsbn9R0v9OcFgdS
+DEBUG (2): Packet sent
+DEBUG (0): Message received from bracelet 1 at time 0:0:0.259933389
+DEBUG (0): Payload: type: 1, msg_id: 1, data: QupLLo2877mHWlAsSHvY
+DEBUG (1): Packet sent
+DEBUG (1): Pairing ack received at time 0:0:0.260101235
+DEBUG (1): Pairing phase 1 completed for node: 0
+
+DEBUG (1): Child bracelet
+DEBUG (2): Message received from bracelet 3 at time 0:0:0.264510999
+DEBUG (2): Payload: type: 1, msg_id: 1, data: wzqpKCsbn9R0v9OcFgdS
+DEBUG (3): Packet sent
+DEBUG (3): Pairing ack received at time 0:0:0.264678845
+DEBUG (3): Pairing phase 1 completed for node: 2
+
+DEBUG (3): Child bracelet
+DEBUG (1): Radio: sending INFO packet to node 0
+DEBUG (3): Radio: sending INFO packet to node 2
+DEBUG (0): Message received from bracelet 1 at time 0:0:10.035232506
+DEBUG (0): Payload: type: 2, msg_id: 2, data: WALKING
+DEBUG (0): INFO message received
+DEBUG (0): Position X: 226, Y: 179
+DEBUG (0): Sensor status: 87
+DEBUG (1): Packet sent
+DEBUG (2): Message received from bracelet 3 at time 0:0:10.037612892
+DEBUG (2): Payload: type: 2, msg_id: 2, data: STANDING
+DEBUG (2): INFO message received
+DEBUG (2): Position X: 196, Y: 103
+DEBUG (2): Sensor status: 83
+DEBUG (3): Packet sent
+DEBUG (1): Radio: sending INFO packet to node 0
+DEBUG (3): Radio: sending INFO packet to node 2
+DEBUG (2): Message received from bracelet 3 at time 0:0:19.798690799
+DEBUG (2): Payload: type: 2, msg_id: 3, data: RUNNING
+DEBUG (2): INFO message received
+DEBUG (2): Position X: 10, Y: 32
+DEBUG (2): Sensor status: 82
+DEBUG (3): Packet sent
+DEBUG (0): Message received from bracelet 1 at time 0:0:19.802429152
+DEBUG (0): Payload: type: 2, msg_id: 3, data: RUNNING
+DEBUG (0): INFO message received
+DEBUG (0): Position X: 5, Y: 144
+DEBUG (0): Sensor status: 82
+DEBUG (1): Packet sent
+DEBUG (1): Radio: sending INFO packet to node 0
+DEBUG (0): Message received from bracelet 1 at time 0:0:29.561096185
+DEBUG (0): Payload: type: 2, msg_id: 4, data: STANDING
+DEBUG (0): INFO message received
+DEBUG (0): Position X: 253, Y: 135
+DEBUG (0): Sensor status: 83
+DEBUG (1): Packet sent
+DEBUG (3): Radio: sending INFO packet to node 2
+DEBUG (2): Message received from bracelet 3 at time 0:0:29.564254764
+DEBUG (2): Payload: type: 2, msg_id: 4, data: STANDING
+DEBUG (2): INFO message received
+DEBUG (2): Position X: 250, Y: 14
+DEBUG (2): Sensor status: 83
+DEBUG (3): Packet sent
+DEBUG (3): Radio: sending INFO packet to node 2
+DEBUG (2): Message received from bracelet 3 at time 0:0:39.337646443
+DEBUG (2): Payload: type: 2, msg_id: 5, data: RUNNING
+DEBUG (2): INFO message received
+DEBUG (2): Position X: 97, Y: 86
+DEBUG (2): Sensor status: 82
+DEBUG (3): Packet sent
+DEBUG (3): Radio: sending INFO packet to node 2
+DEBUG (2): Message received from bracelet 3 at time 0:0:49.096710202
+DEBUG (2): Payload: type: 2, msg_id: 6, data: WALKING
+DEBUG (2): INFO message received
+DEBUG (2): Position X: 136, Y: 204
+DEBUG (2): Sensor status: 87
+DEBUG (3): Packet sent
+DEBUG (3): Radio: sending INFO packet to node 2
+DEBUG (2): Message received from bracelet 3 at time 0:0:58.861557008
+DEBUG (2): Payload: type: 2, msg_id: 7, data: RUNNING
+DEBUG (2): INFO message received
+DEBUG (2): Position X: 94, Y: 68
+DEBUG (2): Sensor status: 82
+DEBUG (3): Packet sent
+DEBUG (3): Radio: sending INFO packet to node 2
+DEBUG (2): Message received from bracelet 3 at time 0:1:8.628601067
+DEBUG (2): Payload: type: 2, msg_id: 8, data: STANDING
+DEBUG (2): INFO message received
+DEBUG (2): Position X: 80, Y: 189
+DEBUG (2): Sensor status: 83
+DEBUG (3): Packet sent
+DEBUG (3): Radio: sending INFO packet to node 2
+DEBUG (2): Message received from bracelet 3 at time 0:1:18.397735568
+DEBUG (2): Payload: type: 2, msg_id: 9, data: STANDING
+DEBUG (2): INFO message received
+DEBUG (2): Position X: 182, Y: 23
+DEBUG (2): Sensor status: 83
+DEBUG (3): Packet sent
+DEBUG (0): TimerAlert: timer fired at time 0:1:28.154296885
+DEBUG (0): ALERT: MISSING node 1
+DEBUG (0): Last known location: 253, Y: 135
+DEBUG (3): Radio: sending INFO packet to node 2
+DEBUG (2): Message received from bracelet 3 at time 0:1:28.162109355
+DEBUG (2): Payload: type: 2, msg_id: 10, data: WALKING
+DEBUG (2): INFO message received
+DEBUG (2): Position X: 214, Y: 172
+DEBUG (2): Sensor status: 87
+DEBUG (3): Packet sent
+DEBUG (3): Radio: sending INFO packet to node 2
+DEBUG (2): Message received from bracelet 3 at time 0:1:37.929061862
+DEBUG (2): Payload: type: 2, msg_id: 11, data: WALKING
+DEBUG (2): INFO message received
+DEBUG (2): Position X: 33, Y: 30
+DEBUG (2): Sensor status: 87
+DEBUG (3): Packet sent
+DEBUG (3): Radio: sending INFO packet to node 2
+DEBUG (2): Message received from bracelet 3 at time 0:1:47.697677567
+DEBUG (2): Payload: type: 2, msg_id: 12, data: FALLING
+DEBUG (2): INFO message received
+DEBUG (2): Position X: 75, Y: 33
+DEBUG (2): Sensor status: 70
+DEBUG (2): ALERT: FALLING!
+DEBUG (3): Packet sent
+DEBUG (3): Radio: sending INFO packet to node 2
+DEBUG (2): Message received from bracelet 3 at time 0:1:57.455078127
+DEBUG (2): Payload: type: 2, msg_id: 13, data: STANDING
+DEBUG (2): INFO message received
+DEBUG (2): Position X: 138, Y: 5
+DEBUG (2): Sensor status: 83
+DEBUG (3): Packet sent
+DEBUG (3): Radio: sending INFO packet to node 2
+DEBUG (2): Message received from bracelet 3 at time 0:2:7.222869863
+DEBUG (2): Payload: type: 2, msg_id: 14, data: STANDING
+DEBUG (2): INFO message received
+DEBUG (2): Position X: 55, Y: 143
+DEBUG (2): Sensor status: 83
+DEBUG (3): Packet sent
+DEBUG (3): Radio: sending INFO packet to node 2
+DEBUG (3): Packet sent
+DEBUG (3): Radio: sending INFO packet to node 2
+DEBUG (2): Message received from bracelet 3 at time 0:2:26.753784171
+DEBUG (2): Payload: type: 2, msg_id: 16, data: WALKING
+DEBUG (2): INFO message received
+DEBUG (2): Position X: 35, Y: 182
+DEBUG (2): Sensor status: 87
+DEBUG (3): Packet sent
+DEBUG (3): Radio: sending INFO packet to node 2
+DEBUG (2): Message received from bracelet 3 at time 0:2:36.518203734
+DEBUG (2): Payload: type: 2, msg_id: 17, data: RUNNING
+DEBUG (2): INFO message received
+DEBUG (2): Position X: 50, Y: 47
+DEBUG (2): Sensor status: 82
+DEBUG (3): Packet sent
+DEBUG (3): Radio: sending INFO packet to node 2
+DEBUG (2): Message received from bracelet 3 at time 0:2:46.283706665
+DEBUG (2): Payload: type: 2, msg_id: 18, data: WALKING
+DEBUG (2): INFO message received
+DEBUG (2): Position X: 213, Y: 231
+DEBUG (2): Sensor status: 87
+DEBUG (3): Packet sent
+DEBUG (3): Radio: sending INFO packet to node 2
+DEBUG (2): Message received from bracelet 3 at time 0:2:56.054168672
+DEBUG (2): Payload: type: 2, msg_id: 19, data: STANDING
+DEBUG (2): INFO message received
+DEBUG (2): Position X: 16, Y: 225
+DEBUG (2): Sensor status: 83
+DEBUG (3): Packet sent
+DEBUG (3): Radio: sending INFO packet to node 2
+DEBUG (2): Message received from bracelet 3 at time 0:3:5.820785488
+DEBUG (2): Payload: type: 2, msg_id: 20, data: FALLING
+DEBUG (2): INFO message received
+DEBUG (2): Position X: 136, Y: 113
+DEBUG (2): Sensor status: 70
+DEBUG (2): ALERT: FALLING!
+DEBUG (3): Packet sent
+DEBUG (3): Radio: sending INFO packet to node 2
+DEBUG (2): Message received from bracelet 3 at time 0:3:15.586822473
+DEBUG (2): Payload: type: 2, msg_id: 21, data: WALKING
+DEBUG (2): INFO message received
+DEBUG (2): Position X: 107, Y: 156
+DEBUG (2): Sensor status: 87
+DEBUG (3): Packet sent

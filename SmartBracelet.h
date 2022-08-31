@@ -35,24 +35,4 @@ enum {
   
 };
 
-// Pre-loaded random keys
-#define FOREACH_KEY(KEY) \
-        KEY(QupLLo2877mHWlAsSHvY) \
-        KEY(wzqpKCsbn9R0v9OcFgdS) \
-        KEY(eYQomjCfG6y6Wq5P65QV) \
-        KEY(zbmn3V2Licz76QIYCnZH) \
-        KEY(QJIpr3uqMKhFOrgSya84) \
-        KEY(N1Rpe4XJvetQAiYrbXoL) \
-        KEY(aCsH4cRnnQ3LJFaC0Dfy) \
-        
-#define GENERATE_ENUM(ENUM) ENUM,
-#define GENERATE_STRING(STRING) #STRING,
-enum KEY_ENUM {
-    FOREACH_KEY(GENERATE_ENUM)
-};
-static const char *PRESTORED_KEY[] = {
-    FOREACH_KEY(GENERATE_STRING)
-};
-
-
 #endif

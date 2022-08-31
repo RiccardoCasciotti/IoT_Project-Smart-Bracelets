@@ -32,13 +32,19 @@ module SmartBraceletC @safe() {
 
 
 implementation {
-  
+  int8_t* PRESTORED_KEY[6] = {
+  		"QupLLo2877mHWlAsSHvY",
+        "wzqpKCsbn9R0v9OcFgdS",
+       	"eYQomjCfG6y6Wq5P65QV",
+        "QJIpr3uqMKhFOrgSya84",
+        "N1Rpe4XJvetQAiYrbXoL",
+        "aCsH4cRnnQ3LJFaC0Dfy"};
  // Radio control
-  bool busy = FALSE;
-  bool paired = FALSE; // to check if the parent is paired to a child
+  uint8_t busy = 0;
+  uint8_t paired = 0; // to check if the parent is paired to a child
   uint16_t counter = 0;
   message_t packet;
-  am_addr_t parent_key;
+  am_addr_t coupled_address;
   uint8_t attempt = 0;
   
   // Current mode
@@ -57,11 +63,10 @@ implementation {
   bool sensors_read_completed = FALSE;
   
   sensor_status status;
-  sensor_status* last_status;
+  sensor_status last_status;
   
   void send_confirmation();
   void send_position();
-  bool compare(u)
   
   // Program start
   event void Boot.booted() {
@@ -72,10 +77,13 @@ implementation {
   event void AMControl.startDone(error_t err) {
     if (err == SUCCESS) {
       dbg("Radio", "Radio device ready\n");
-      dbg("Pairing", "Pairing mode started\n");
+      
       
       // Start pairing mode
+     if ( TOS_NODE_ID%2 == 0 ){
       call TimerPairing.startPeriodic(250);
+      dbg("Pairing", "Pairing mode started\n");
+      }
     } else {
       call AMControl.start();
     }
@@ -96,7 +104,7 @@ implementation {
 
       //The node ID is divided by 2 so every 2 nodes will be the same number (0/2=0 and 1/2=0)
       //we get the same key for every 2 nodes: parent and child
-      strcpy(smartB_pairing_message->data, PRESTORED_KEY[TOS_NODE_ID/2]);
+      strcpy((char*)smartB_pairing_message->data, (char*)PRESTORED_KEY[TOS_NODE_ID/2]);
       
       if (call AMSend.send(AM_BROADCAST_ADDR, &packet, sizeof(smartB_msg_t)) == SUCCESS) {
 	      dbg("Radio", "Radio: sending pairing packet, key=%s\n", PRESTORED_KEY[TOS_NODE_ID/2]);	
@@ -114,25 +122,28 @@ implementation {
   // TimerAlert fired
   event void TimerAlert.fired() {
     dbg("TimerAlert", "TimerAlert: timer fired at time %s\n", sim_time_string());
-    dbg("Info", "ALERT: MISSING");
+    dbg("Info", "ALERT: MISSING node %d\n", coupled_address);
     dbg("Info","Last known location: %hhu, Y: %hhu\n", last_status.X, last_status.Y);
 
     //send to serial here
 
   }
 
+
  
   
   event void AMSend.sendDone(message_t* rec_packet, error_t error) {
     if (&packet == rec_packet && error == SUCCESS) {
       dbg("Radio_sent", "Packet sent\n");
-      busy = FALSE;
+      busy = 0;
       
       if (mode == 1 && call PacketAcknowledgements.wasAcked(rec_packet) ){
         // mode == 1 and ack received
+
         mode = 2; // Pairing phase 1 completed
+        paired = 1;
         dbg("Radio_ack", "Pairing ack received at time %s\n", sim_time_string());
-        dbg("Pairing","Pairing phase 1 completed for node: %hhu\n\n", address_coupled_device);
+        dbg("Pairing","Pairing phase 1 completed for node: %hhu\n\n", coupled_address);
         
         // Start operational phase
         if (TOS_NODE_ID % 2 == 0){
@@ -151,18 +162,10 @@ implementation {
         dbg("Radio_ack", "Pairing ack not received at time %s\n", sim_time_string());
         send_confirmation(); // Send confirmation again
       
-      } else if (mode == 2 && call PacketAcknowledgements.wasAcked(rec_packet)){
-        // Mode == 2 and ack received
-        dbg("Radio_ack", "INFO ack received at time %s\n", sim_time_string());
-        attempt = 0;
-        
-      } else if (mode == 2){
-        // Mode == 2 and ack not received
-        dbg("Radio_ack", "INFO ack not received at time %s\n", sim_time_string());
-        send_position();
-      }
+      } 
         
     }
+
 
   }
   
@@ -170,9 +173,10 @@ implementation {
    
   event message_t* Receive.receive(message_t* rec_packet, void* payload, uint8_t len) {
     // The receive is organized by use case and is going to call other functions depending 
-    // on the message received ( to have a clearer code ).
+    // on the message received ( to have a clearer code )
     smartB_msg_t* message = (smartB_msg_t*)payload;
     // Print data of the received packet
+    
 	  dbg("Receive","Message received from bracelet %hhu at time %s\n", call AMPacket.source( rec_packet ), sim_time_string());
 	  dbg("Received_package","Payload: type: %hu, msg_id: %hhu, data: %s\n", message->msg_type, message->msg_id, message->data);
     
@@ -180,16 +184,19 @@ implementation {
 
     // checknig that is a broadcast message, that the mode is 0 (pairing phase)  
     // and that the key is the same
-    if (call AMPacket.destination( rec_packet ) == AM_BROADCAST_ADDR && mode == 0 && strcmp(message->data, &(PRESTORED_KEY[TOS_NODE_ID/2])) == 0){
-      
-      parent_key = call AMPacket.source( rec_packet );
+    if (call AMPacket.destination( rec_packet ) == AM_BROADCAST_ADDR && mode == 0 && strcmp((char*)message->data, (char*)PRESTORED_KEY[TOS_NODE_ID/2]) == 0){
+
+      coupled_address = call AMPacket.source( rec_packet );
+
       mode = 1; // 1 for confirmation of pairing phase
-      dbg("Radio_pack","Message for pairing phase 0 received. Address: %hhu\n", parent_key);
+      dbg("Radio_pack","Message for pairing phase 0 received. Address: %hhu\n", coupled_address);
       send_confirmation();
     
     } else if (call AMPacket.destination( rec_packet ) == TOS_NODE_ID && message->msg_type == 1) {
       // Enters if the packet is for this destination and if the msg_type == 1
       dbg("Radio_pack","Message for pairing phase 1 received\n");
+      coupled_address = call AMPacket.source( rec_packet );
+      paired = 1; 
       call TimerPairing.stop();
 	}
     //Received an info message
@@ -197,20 +204,22 @@ implementation {
 
       // Check if the instance is a parent, if the parent is paired and if the message comes from
       // the paired child
-      if( TOS_NODE_ID%2 == 0 && paired && call AMPacket.source( rec_packet ) == parent_key){
-        last_status->X = message->X;
-        last_status->Y = message->Y;
 
+      if(TOS_NODE_ID%2 == 0  && paired == 1 && call AMPacket.source( rec_packet ) == coupled_address){
+
+        last_status.X = message->X;
+        last_status.Y = message->Y;
+		
         dbg("Received_package","INFO message received\n");
         dbg("Info", "Position X: %hhu, Y: %hhu\n", message->X, message->Y);
-        dbg("Info", "Sensor status: %s\n", message->data[0]);
+        
         
 
         // Check if the status is FALLING and signal an alarm
-        if (message->data[0] == 3){
+        if (strcmp((char*)message->data,"FALLING") == 0){
             dbg("Info", "ALERT: FALLING!\n");
  	          //send to serial here
-    }
+    	}
 
         // Start the alert timer, if it finishes because it never gets caled back again then 
         // the child is missing
@@ -218,6 +227,8 @@ implementation {
 
       }
   }
+
+  return rec_packet;
   }
    
    
@@ -232,16 +243,18 @@ implementation {
       // Fill payload
       sb_pairing_message->msg_type = 1; // 1 for confirmation of pairing phase
       sb_pairing_message->msg_id = counter;
+
+      strcpy((char*)sb_pairing_message->data, (char*)PRESTORED_KEY[TOS_NODE_ID/2]);
+
       
-      strcpy(sb_pairing_message->data, PRESTORED_KEY[TOS_NODE_ID/2]);
-      
-      /* Require ack
       call PacketAcknowledgements.requestAck( &packet );
-      */
+
       
-      if (call AMSend.send(parent_key, &packet, sizeof(smartB_msg_t)) == SUCCESS) {
-        dbg("Radio", "Radio: sending pairing confirmation to node %hhu\n", parent_key);	
-        busy = TRUE;
+      if (call AMSend.send(coupled_address, &packet, sizeof(smartB_msg_t)) == SUCCESS) {
+        dbg("Radio", "Radio: sending pairing confirmation to node %hhu\n", coupled_address);	
+
+        busy = 1;
+        
       }
     }
   }
@@ -249,6 +262,8 @@ implementation {
   event void PositionSensor.readDone(error_t result, sensor_status current_read) {
 	if( result == SUCCESS ){ //check that the reading went well
         status = current_read;
+        
+
         sensors_read_completed = TRUE;
         send_position();
         sensors_read_completed = FALSE; // reset the sensor reading routine var
@@ -263,7 +278,7 @@ implementation {
 
     //I need to make the sensor reading and gather the data
     if(sensors_read_completed){
-      bool msg_state = FALSE;
+      
       // Prepare the info message and fill it with the sensor data
       smartB_msg_t* info_message = (smartB_msg_t*)call Packet.getPayload(&packet, sizeof(smartB_msg_t));
       info_message->msg_type = 2;
@@ -271,9 +286,9 @@ implementation {
       info_message->X = status.X;
       info_message->Y = status.Y;
       
-      info_message->data[0] = status.status;
-      info_message->data[1] = 0; // num 0 used as terminator since it is not going to be used in the keys
-       msg_state = TRUE;
+      strcpy((char*)info_message->data, (char*)status.status);
+      //info_message->data[1] = 0; // num 0 used as terminator since it is not going to be used in the keys
+      
 
       /*
       // The child requires an ACK for the info mesage sent to the parent
@@ -281,9 +296,9 @@ implementation {
       */
 
      // Send the info message to the parent bracelet using the unique address.
-     if (!busy && call AMSend.send(parent_key, &packet, sizeof(smartB_msg_t)) == SUCCESS ) {
-          dbg("Radio", "Radio: sending INFO packet to node %hhus\n", parent_key);	
-          busy = TRUE;
+     if (!busy && call AMSend.send(coupled_address, &packet, sizeof(smartB_msg_t)) == SUCCESS ) {
+          dbg("Radio", "Radio: sending INFO packet to node %hhu\n", coupled_address);	
+          busy = 1;
         }
 
     }
@@ -291,4 +306,3 @@ implementation {
   
 }
 
-        

@@ -25,18 +25,18 @@ implementation
 	  int random_number = (call Random.rand16() % 10);
 		
 		if (random_number <= 2){
-		  strcpy(status.status, "STANDING");
+		  strcpy((char*)status.status, "STANDING");
 		} else if (random_number <= 5){
-		  strcpy(status.status, "WALKING");
+		  strcpy((char*)status.status, "WALKING");
 		} else if (random_number <= 8){
-		  strcpy(status.status, "RUNNING");
+		  strcpy((char*)status.status, "RUNNING");
 		} else {
-		  strcpy(status.status, "FALLING");
+		  strcpy((char*)status.status, "FALLING");
 		}
 		
-	  	signal Read.readDone( SUCCESS, status);
+	  	
 	  	status.X = call Random.rand16();
 	  	status.Y = call Random.rand16();
-
+		signal Read.readDone( SUCCESS, status);
 	}
 }  
