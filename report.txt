@@ -20,7 +20,7 @@ SmartBracelet.h:
         - The types of messages are: 0 for pairing phase, 1 for confirmation of the pairing by the child to the parent, 2 for operational phase where the child mote sends information to the parent, 3 alert mode. 
     
     - Status struct
-        - It is used by the position sensor to represent the data it gathered.ù
+        - It is used by the position sensor to represent the data it gathered.
         - It contains the coordinates of the position of the mote and a string "status" which contains the status of the child: STANDING, RUNNING, WALKING, FALLING.
 
 
